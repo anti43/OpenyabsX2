@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta name="layout" content="main" />
+        <meta name="layout" content="yabs" />
         <g:set var="entityName" value="${message(code: 'contact.label', default: 'Contact')}" />
         <title><g:message code="default.edit.label" args="[entityName]" /></title>
     </head>

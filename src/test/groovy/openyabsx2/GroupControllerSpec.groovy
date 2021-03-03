@@ -5,7 +5,7 @@ import grails.testing.web.controllers.ControllerUnitTest
 import grails.validation.ValidationException
 import spock.lang.*
 
-class ContactControllerSpec extends Specification implements ControllerUnitTest<ContactController>, DomainUnitTest<Contact> {
+class GroupControllerSpec extends Specification implements ControllerUnitTest<GroupController>, DomainUnitTest<Group> {
 
     def populateValidParams(params) {
         assert params != null
@@ -17,7 +17,7 @@ class ContactControllerSpec extends Specification implements ControllerUnitTest<
 
     void "Test the index action returns the correct model"() {
         given:
-        controller.contactService = Mock(ContactService) {
+        controller.groupService = Mock(GroupService) {
             1 * list(_) >> []
             1 * count() >> 0
         }
@@ -26,8 +26,8 @@ class ContactControllerSpec extends Specification implements ControllerUnitTest<
         controller.index()
 
         then:"The model is correct"
-        !model.contactList
-        model.contactCount == 0
+        !model.groupList
+        model.groupCount == 0
     }
 
     void "Test the create action returns the correct model"() {
@@ -35,7 +35,7 @@ class ContactControllerSpec extends Specification implements ControllerUnitTest<
         controller.create()
 
         then:"The model is correctly created"
-        model.contact!= null
+        model.group!= null
     }
 
     void "Test the save action with a null instance"() {
@@ -45,14 +45,14 @@ class ContactControllerSpec extends Specification implements ControllerUnitTest<
         controller.save(null)
 
         then:"A 404 error is returned"
-        response.redirectedUrl == '/contact/index'
+        response.redirectedUrl == '/group/index'
         flash.message != null
     }
 
     void "Test the save action correctly persists"() {
         given:
-        controller.contactService = Mock(ContactService) {
-            1 * save(_ as Contact)
+        controller.groupService = Mock(GroupService) {
+            1 * save(_ as Group)
         }
 
         when:"The save action is executed with a valid instance"
@@ -60,38 +60,38 @@ class ContactControllerSpec extends Specification implements ControllerUnitTest<
         request.contentType = FORM_CONTENT_TYPE
         request.method = 'POST'
         populateValidParams(params)
-        def contact = new Contact(params)
-        contact.id = 1
+        def group = new Group(params)
+        group.id = 1
 
-        controller.save(contact)
+        controller.save(group)
 
         then:"A redirect is issued to the show action"
-        response.redirectedUrl == '/contact/show/1'
+        response.redirectedUrl == '/group/show/1'
         controller.flash.message != null
     }
 
     void "Test the save action with an invalid instance"() {
         given:
-        controller.contactService = Mock(ContactService) {
-            1 * save(_ as Contact) >> { Contact contact ->
-                throw new ValidationException("Invalid instance", contact.errors)
+        controller.groupService = Mock(GroupService) {
+            1 * save(_ as Group) >> { Group group ->
+                throw new ValidationException("Invalid instance", group.errors)
             }
         }
 
         when:"The save action is executed with an invalid instance"
         request.contentType = FORM_CONTENT_TYPE
         request.method = 'POST'
-        def contact = new Contact()
-        controller.save(contact)
+        def group = new Group()
+        controller.save(group)
 
         then:"The create view is rendered again with the correct model"
-        model.contact != null
+        model.group != null
         view == 'create'
     }
 
     void "Test the show action with a null id"() {
         given:
-        controller.contactService = Mock(ContactService) {
+        controller.groupService = Mock(GroupService) {
             1 * get(null) >> null
         }
 
@@ -104,20 +104,20 @@ class ContactControllerSpec extends Specification implements ControllerUnitTest<
 
     void "Test the show action with a valid id"() {
         given:
-        controller.contactService = Mock(ContactService) {
-            1 * get(2) >> new Contact()
+        controller.groupService = Mock(GroupService) {
+            1 * get(2) >> new Group()
         }
 
         when:"A domain instance is passed to the show action"
         controller.show(2)
 
         then:"A model is populated containing the domain instance"
-        model.contact instanceof Contact
+        model.group instanceof Group
     }
 
     void "Test the edit action with a null id"() {
         given:
-        controller.contactService = Mock(ContactService) {
+        controller.groupService = Mock(GroupService) {
             1 * get(null) >> null
         }
 
@@ -130,15 +130,15 @@ class ContactControllerSpec extends Specification implements ControllerUnitTest<
 
     void "Test the edit action with a valid id"() {
         given:
-        controller.contactService = Mock(ContactService) {
-            1 * get(2) >> new Contact()
+        controller.groupService = Mock(GroupService) {
+            1 * get(2) >> new Group()
         }
 
         when:"A domain instance is passed to the show action"
         controller.edit(2)
 
         then:"A model is populated containing the domain instance"
-        model.contact instanceof Contact
+        model.group instanceof Group
     }
 
 
@@ -149,14 +149,14 @@ class ContactControllerSpec extends Specification implements ControllerUnitTest<
         controller.update(null)
 
         then:"A 404 error is returned"
-        response.redirectedUrl == '/contact/index'
+        response.redirectedUrl == '/group/index'
         flash.message != null
     }
 
     void "Test the update action correctly persists"() {
         given:
-        controller.contactService = Mock(ContactService) {
-            1 * save(_ as Contact)
+        controller.groupService = Mock(GroupService) {
+            1 * save(_ as Group)
         }
 
         when:"The save action is executed with a valid instance"
@@ -164,31 +164,31 @@ class ContactControllerSpec extends Specification implements ControllerUnitTest<
         request.contentType = FORM_CONTENT_TYPE
         request.method = 'PUT'
         populateValidParams(params)
-        def contact = new Contact(params)
-        contact.id = 1
+        def group = new Group(params)
+        group.id = 1
 
-        controller.update(contact)
+        controller.update(group)
 
         then:"A redirect is issued to the show action"
-        response.redirectedUrl == '/contact/show/1'
+        response.redirectedUrl == '/group/show/1'
         controller.flash.message != null
     }
 
     void "Test the update action with an invalid instance"() {
         given:
-        controller.contactService = Mock(ContactService) {
-            1 * save(_ as Contact) >> { Contact contact ->
-                throw new ValidationException("Invalid instance", contact.errors)
+        controller.groupService = Mock(GroupService) {
+            1 * save(_ as Group) >> { Group group ->
+                throw new ValidationException("Invalid instance", group.errors)
             }
         }
 
         when:"The save action is executed with an invalid instance"
         request.contentType = FORM_CONTENT_TYPE
         request.method = 'PUT'
-        controller.update(new Contact())
+        controller.update(new Group())
 
         then:"The edit view is rendered again with the correct model"
-        model.contact != null
+        model.group != null
         view == 'edit'
     }
 
@@ -199,13 +199,13 @@ class ContactControllerSpec extends Specification implements ControllerUnitTest<
         controller.delete(null)
 
         then:"A 404 is returned"
-        response.redirectedUrl == '/contact/index'
+        response.redirectedUrl == '/group/index'
         flash.message != null
     }
 
     void "Test the delete action with an instance"() {
         given:
-        controller.contactService = Mock(ContactService) {
+        controller.groupService = Mock(GroupService) {
             1 * delete(2)
         }
 
@@ -215,7 +215,7 @@ class ContactControllerSpec extends Specification implements ControllerUnitTest<
         controller.delete(2)
 
         then:"The user is redirected to index"
-        response.redirectedUrl == '/contact/index'
+        response.redirectedUrl == '/group/index'
         flash.message != null
     }
 }

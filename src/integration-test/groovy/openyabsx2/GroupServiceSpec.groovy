@@ -7,37 +7,37 @@ import org.hibernate.SessionFactory
 
 @Integration
 @Rollback
-class ContactServiceSpec extends Specification {
+class GroupServiceSpec extends Specification {
 
-    ContactService contactService
+    GroupService groupService
     SessionFactory sessionFactory
 
     private Long setupData() {
         // TODO: Populate valid domain instances and return a valid ID
-        //new Contact(...).save(flush: true, failOnError: true)
-        //new Contact(...).save(flush: true, failOnError: true)
-        //Contact contact = new Contact(...).save(flush: true, failOnError: true)
-        //new Contact(...).save(flush: true, failOnError: true)
-        //new Contact(...).save(flush: true, failOnError: true)
+        //new Group(...).save(flush: true, failOnError: true)
+        //new Group(...).save(flush: true, failOnError: true)
+        //Group group = new Group(...).save(flush: true, failOnError: true)
+        //new Group(...).save(flush: true, failOnError: true)
+        //new Group(...).save(flush: true, failOnError: true)
         assert false, "TODO: Provide a setupData() implementation for this generated test suite"
-        //contact.id
+        //group.id
     }
 
     void "test get"() {
         setupData()
 
         expect:
-        contactService.get(1) != null
+        groupService.get(1) != null
     }
 
     void "test list"() {
         setupData()
 
         when:
-        List<Contact> contactList = contactService.list(max: 2, offset: 2)
+        List<Group> groupList = groupService.list(max: 2, offset: 2)
 
         then:
-        contactList.size() == 2
+        groupList.size() == 2
         assert false, "TODO: Verify the correct instances are returned"
     }
 
@@ -45,30 +45,30 @@ class ContactServiceSpec extends Specification {
         setupData()
 
         expect:
-        contactService.count() == 5
+        groupService.count() == 5
     }
 
     void "test delete"() {
-        Long contactId = setupData()
+        Long groupId = setupData()
 
         expect:
-        contactService.count() == 5
+        groupService.count() == 5
 
         when:
-        contactService.delete(contactId)
+        groupService.delete(groupId)
         sessionFactory.currentSession.flush()
 
         then:
-        contactService.count() == 4
+        groupService.count() == 4
     }
 
     void "test save"() {
         when:
         assert false, "TODO: Provide a valid instance to save"
-        Contact contact = new Contact()
-        contactService.save(contact)
+        Group group = new Group()
+        groupService.save(group)
 
         then:
-        contact.id != null
+        group.id != null
     }
 }

@@ -8,8 +8,21 @@
 * compiled file, but it's generally better to create a new file per style scope.
 *
 *= require bootstrap
-*= require grails
-*= require main
-*= require mobile
-*= require_self
+*= require sb-admin-2
+*= require dataTables.bootstrap4
+*= require buttons.bootstrap4
+*= require chosen
+*= require require_self
 */
+
+.nav ul > li {
+    display: inline-block;
+    /* You can also add some margins here to make it look prettier */
+    zoom:1;
+    *display:inline;
+    /* this fix is needed for IE7- */
+}
+
+table {
+}
+

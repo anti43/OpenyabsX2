@@ -3,71 +3,71 @@ package openyabsx2
 import grails.plugin.springsecurity.annotation.Secured
 import grails.validation.ValidationException
 import static org.springframework.http.HttpStatus.*
-
 @Secured('ROLE_ADMIN')
-class ContactController {
+class GroupController {
 
-    ContactService contactService
+    GroupService groupService
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def index(Integer max) {
-        respond contactService.list(params), model:[contactCount: contactService.count()]
+        params.max = Math.min(max ?: 10, 100)
+        respond groupService.list(params), model:[groupCount: groupService.count()]
     }
 
     def show(Long id) {
-        respond contactService.get(id)
+        respond groupService.get(id)
     }
 
     def create() {
-        respond new Contact(params)
+        respond new Group(params)
     }
 
-    def save(Contact contact) {
-        if (contact == null) {
+    def save(Group group) {
+        if (group == null) {
             notFound()
             return
         }
 
         try {
-            contactService.save(contact)
+            groupService.save(group)
         } catch (ValidationException e) {
-            respond contact.errors, view:'create'
+            respond group.errors, view:'create'
             return
         }
 
         request.withFormat {
             form multipartForm {
-                flash.message = message(code: 'default.created.message', args: [message(code: 'contact.label', default: 'Contact'), contact.id])
-                redirect contact
+                flash.message = message(code: 'default.created.message', args: [message(code: 'group.label', default: 'Group'), group.id])
+                redirect group
             }
-            '*' { respond contact, [status: CREATED] }
+            '*' { respond group, [status: CREATED] }
         }
     }
 
     def edit(Long id) {
-        respond contactService.get(id)
+        respond groupService.get(id)
     }
 
-    def update(Contact contact) {
-        if (contact == null) {
+    def update(Group group) {
+        if (group == null) {
             notFound()
             return
         }
 
         try {
-            contactService.save(contact)
+            groupService.save(group)
         } catch (ValidationException e) {
-            respond contact.errors, view:'edit'
+            respond group.errors, view:'edit'
             return
         }
 
         request.withFormat {
             form multipartForm {
-                flash.message = message(code: 'default.updated.message', args: [message(code: 'contact.label', default: 'Contact'), contact.id])
-                redirect contact
+                flash.message = message(code: 'default.updated.message', args: [message(code: 'group.label', default: 'Group'), group.id])
+                redirect group
             }
-            '*'{ respond contact, [status: OK] }
+            '*'{ respond group, [status: OK] }
         }
     }
 
@@ -77,11 +77,11 @@ class ContactController {
             return
         }
 
-        contactService.delete(id)
+        groupService.delete(id)
 
         request.withFormat {
             form multipartForm {
-                flash.message = message(code: 'default.deleted.message', args: [message(code: 'contact.label', default: 'Contact'), id])
+                flash.message = message(code: 'default.deleted.message', args: [message(code: 'group.label', default: 'Group'), id])
                 redirect action:"index", method:"GET"
             }
             '*'{ render status: NO_CONTENT }
@@ -91,7 +91,7 @@ class ContactController {
     protected void notFound() {
         request.withFormat {
             form multipartForm {
-                flash.message = message(code: 'default.not.found.message', args: [message(code: 'contact.label', default: 'Contact'), params.id])
+                flash.message = message(code: 'default.not.found.message', args: [message(code: 'group.label', default: 'Group'), params.id])
                 redirect action: "index", method: "GET"
             }
             '*'{ render status: NOT_FOUND }
