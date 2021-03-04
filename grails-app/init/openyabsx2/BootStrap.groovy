@@ -12,6 +12,7 @@ class BootStrap {
     def init = { servletContext ->
 
         createRootGroup()
+        createReceiptTypes()
         addTestUser()
         importLegacy()
     }
@@ -111,5 +112,13 @@ class BootStrap {
     @Transactional
     void createRootGroup() {
         new Group(name: Group.ROOT).save(flush: true)
+    }
+
+    @Transactional
+    void createReceiptTypes() {
+        new ReceiptType(name: "Invoice").save(flush: true)
+        new ReceiptType(name: "Order").save(flush: true)
+        new ReceiptType(name: "Offer").save(flush: true)
+        new ReceiptType(name: "Delivery Note").save(flush: true)
     }
 }

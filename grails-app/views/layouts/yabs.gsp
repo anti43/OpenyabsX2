@@ -114,15 +114,12 @@
             <div id="collapsePages" class="collapse" aria-labelledby="headingPages"
                  data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">Login Screens:</h6>
-                    <a class="collapse-item" href="login.html">Login</a>
-                    <a class="collapse-item" href="register.html">Register</a>
-                    <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
+                    <h6 class="collapse-header">Controllers:</h6>
 
-                    <div class="collapse-divider"></div>
-                    <h6 class="collapse-header">Other Pages:</h6>
-                    <a class="collapse-item" href="404.html">404 Page</a>
-                    <a class="collapse-item" href="blank.html">Blank Page</a>
+                    <g:each var="c" in="${grailsApplication.controllerClasses.sort { it.fullName }}">
+                        <div class="collapse-item"> <g:link controller="${c.logicalPropertyName}">${c.logicalPropertyName}</g:link></div>
+                    </g:each>
+
                 </div>
             </div>
         </li>
@@ -404,6 +401,27 @@
                     <span>Copyright &copy; Openyabs 2020</span>
                 </div>
             </div>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                   aria-expanded="false">Application Status <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li class="dropdown-item"><a href="#">Environment: ${grails.util.Environment.current.name}</a></li>
+                    <li class="dropdown-item"><a href="#">App profile: ${grailsApplication.config.grails?.profile}</a>
+                    </li>
+                    <li class="dropdown-item"><a href="#">App version:
+                        <g:meta name="info.app.version"/></a>
+                    </li>
+                    <li role="separator" class="dropdown-divider"></li>
+                    <li class="dropdown-item"><a href="#">Grails version:
+                        <g:meta name="info.app.grailsVersion"/></a>
+                    </li>
+                    <li class="dropdown-item"><a href="#">Groovy version: ${GroovySystem.getVersion()}</a></li>
+                    <li class="dropdown-item"><a href="#">JVM version: ${System.getProperty('java.version')}</a></li>
+                    <li role="separator" class="dropdown-divider"></li>
+                    <li class="dropdown-item"><a
+                            href="#">Reloading active: ${grails.util.Environment.reloadingAgentEnabled}</a></li>
+                </ul>
+            </li>
         </footer>
         <!-- End of Footer -->
 
@@ -439,7 +457,6 @@
         </div>
     </div>
 </div>
-
 
 </body>
 
