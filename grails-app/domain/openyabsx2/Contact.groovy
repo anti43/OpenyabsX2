@@ -2,6 +2,9 @@ package openyabsx2
 
 class Contact {
 
+    transient def springSecurityService
+    transient def yabsNumberGeneratorService
+
     Group group
 
     String name = ""
@@ -36,9 +39,14 @@ class Contact {
     String importid
 
     def beforeValidate() {
+        cnumber = cnumber?:yabsNumberGeneratorService.nextVal(Contact.class.name)
         if (!group) group = Group.findByName(Group.ROOT)
     }
 
+    static mapping = {
+        autowire true
+        autoTimestamp true
+    }
 
     static constraints = {
         name blank: false, unique: false

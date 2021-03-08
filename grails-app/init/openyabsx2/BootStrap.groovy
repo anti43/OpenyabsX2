@@ -104,8 +104,9 @@ class BootStrap {
         Contact.withSession {
             it.flush()
         }
-        println Contact.all*.name as String
-        println Group.all*.name as String
+
+        sql.eachRow("select * from items a")
+
 
     }
 

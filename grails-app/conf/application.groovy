@@ -1,4 +1,4 @@
-yabs.legacy.derby.path = "/home/andreas/.yabs/yabs0db"
+yabs.legacy.derby.path = "C:\\Users\\senio\\.yabs\\yabs0db"
 grails.gorm.failOnError = true
 // Added by the Spring Security Core plugin:
 grails.plugin.springsecurity.userLookup.userDomainClassName = 'openyabsx2.User'

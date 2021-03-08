@@ -21,6 +21,7 @@ class Receipt {
 
     static mapping = {
         autowire true
+        autoTimestamp true
     }
 
     /**
@@ -44,7 +45,7 @@ class Receipt {
     /**
      * Executed before an object is validated*/
     def beforeValidate() {
-        cnumber = cnumber?:yabsNumberGeneratorService.nextVal(getClass().getName())
+        cnumber = cnumber?:yabsNumberGeneratorService.nextVal(Receipt.class.name)
         receiptTypeService.execute("beforeValidate", this)
     }
 

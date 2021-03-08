@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta name="layout" content="main" />
+        <meta name="layout" content="yabs" />
         <g:set var="entityName" value="${message(code: 'historyLogEntry.label', default: 'HistoryLogEntry')}" />
         <title><g:message code="default.create.label" args="[entityName]" /></title>
     </head>
