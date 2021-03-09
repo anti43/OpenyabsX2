@@ -43,7 +43,10 @@ class BootStrap {
     void importLegacy() {
 
         def derbyPath = grailsApplication.config.getProperty('yabs.legacy.derby.path')
-        if(!new File(derbyPath as String).exists())return
+        if(!new File(derbyPath as String).exists()){
+            log.warn("Path ${derbyPath} does not exist" )
+            return
+        }
 
         def sql = Sql.newInstance("jdbc:derby:$derbyPath", "org.apache.derby.jdbc.ClientDriver")
         sql.eachRow("select IDS, CNAME, DESCRIPTION, DEFAULTS, GROUPSIDS, DATEADDED, RESERVE1, INTADDEDBY, HIERARCHYPATH, RESERVE2 from groups a", {
@@ -105,7 +108,7 @@ class BootStrap {
             it.flush()
         }
 
-        sql.eachRow("select * from items a")
+       // sql.eachRow("select * from items a")
 
 
     }
