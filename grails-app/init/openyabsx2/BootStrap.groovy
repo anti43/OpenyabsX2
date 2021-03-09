@@ -108,9 +108,42 @@ class BootStrap {
             it.flush()
         }
 
-       // sql.eachRow("select * from items a")
+        sql.eachRow("select a.IDS," +
+                " CNAME, CNUMBER, DESCRIPTION, GROUPSIDS, ACCOUNTSIDS, CONTACTSIDS, NETVALUE, TAXVALUE, " +
+                "DISCOUNTVALUE, SHIPPINGVALUE, DATETODO, DATEEND, INTREMINDERS, INTTYPE, DATEADDED, INTADDEDBY, " +
+                "INVISIBLE, INTSTATUS, HIERARCHYPATH, RESERVE1, RESERVE2, DISCOUNTGROSVALUE, REFORDERIDS" +
+                " from items a", {
+            new Receipt( cnumber: it['CNUMBER'] as String ).save()
+        })
+        Receipt.withSession {
+            it.flush()
+        }
 
+    }
 
+    public static final int TYPE_INVOICE = 0;
+    public static final int TYPE_ORDER = 1;
+    public static final int TYPE_OFFER = 2;
+    public static final int TYPE_DELIVERY_NOTE = 3;
+    public static final int TYPE_ORDER_CONFIRMATION = 4;
+
+    static String getTypeString(Integer type) {
+        if (type == null) {
+            return "";
+        }
+        switch (type) {
+            case (TYPE_INVOICE):
+                return "TYPE_INVOICE".toString();
+            case (TYPE_OFFER):
+                return "TYPE_OFFER".toString();
+            case (TYPE_ORDER):
+                return "TYPE_ORDER".toString();
+            case (TYPE_ORDER_CONFIRMATION):
+                return "TYPE_CONFIRMATION".toString();
+            case (TYPE_DELIVERY_NOTE):
+                return "TYPE_DELIVERY".toString();
+        }
+        return "";
     }
 
     @Transactional
