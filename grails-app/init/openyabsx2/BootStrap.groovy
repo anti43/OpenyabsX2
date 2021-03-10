@@ -130,7 +130,7 @@ class BootStrap {
                     todoDate: row['DATETODO'] as Date,
                     endDate: row['DATEEND'] as Date,
                     reminders: row['INTREMINDERS'] as int
-            ).save()
+            ).save(failOnError: false)
         })
         Receipt.withSession {
             it.flush()

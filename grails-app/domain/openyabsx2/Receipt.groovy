@@ -43,6 +43,8 @@ class Receipt {
         autoTimestamp true
     }
 
+    static hasMany = [receiptItems: ReceiptItem]
+
     /**
      * Executed before an object is initially persisted to the database. If you return false, the insert will be cancelled.*/
     boolean beforeInsert() {
