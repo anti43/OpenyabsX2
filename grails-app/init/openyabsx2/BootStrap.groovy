@@ -43,8 +43,8 @@ class BootStrap {
     void importLegacy() {
 
         def derbyPath = grailsApplication.config.getProperty('yabs.legacy.derby.path')
-        if(!new File(derbyPath as String).exists()){
-            log.warn("Path ${derbyPath} does not exist" )
+        if (!new File(derbyPath as String).exists()) {
+            log.warn("Path ${derbyPath} does not exist")
             return
         }
 
@@ -69,14 +69,16 @@ class BootStrap {
         })
         sql.eachRow("select a.IDS, CNUMBER, TAXNUMBER, TITLE, GROUPSIDS, COUNTRY, PRENAME, CNAME, STREET, ZIP, CITY, MAINPHONE, FAX, MOBILEPHONE, WORKPHONE, MAILADDRESS, " +
                 "COMPANY, DEPARTMENT, WEBSITE, NOTES, DATEADDED, ISACTIVE, ISCUSTOMER, ISMANUFACTURER, ISSUPPLIER, ISCOMPANY, ISMALE, ISENABLED, INTADDEDBY, INVISIBLE, RESERVE1, RESERVE2, " +
-                "BANKACCOUNT, BANKID, BANKNAME, BANKCURRENCY, BANKCOUNTRY, PAYTERM from contacts a", {
+                "BANKACCOUNT, BANKID, BANKNAME, BANKCURRENCY, BANKCOUNTRY, PAYTERM from contacts a order by IDS", {
             it.eachRow { row ->
 
-                new Contact(name: row["CNAME"] as String,
+                new Contact(
+                        importid: row['IDS'] as String,
+                        name: row["CNAME"] as String,
                         cnumber: row["CNUMBER"] as String,
                         taxnumber: row["TAXNUMBER"] as String,
                         title: row["TITLE"] as String,
-                        group: Group.findByImportid(row["GROUPSIDS"] as String),
+                        group: Group.findByImportid(row["GROUPSIDS"] as String)?: Group.findByName(Group.ROOT),
                         prename: row["PRENAME"] as String,
                         street: row["STREET"] as String,
                         zip: row["ZIP"] as String,
@@ -104,6 +106,7 @@ class BootStrap {
                 ).save()
             }
         })
+        new Contact(cnumber: "missing", name: "missing", group: Group.findByName(Group.ROOT)).save()
         Contact.withSession {
             it.flush()
         }
@@ -112,8 +115,22 @@ class BootStrap {
                 " CNAME, CNUMBER, DESCRIPTION, GROUPSIDS, ACCOUNTSIDS, CONTACTSIDS, NETVALUE, TAXVALUE, " +
                 "DISCOUNTVALUE, SHIPPINGVALUE, DATETODO, DATEEND, INTREMINDERS, INTTYPE, DATEADDED, INTADDEDBY, " +
                 "INVISIBLE, INTSTATUS, HIERARCHYPATH, RESERVE1, RESERVE2, DISCOUNTGROSVALUE, REFORDERIDS" +
-                " from items a", {
-            new Receipt( cnumber: it['CNUMBER'] as String ).save()
+                " from items a", { row ->
+
+            new Receipt(cnumber: row['CNUMBER'] as String,
+                    receiptStatus: ReceiptStatus.findByName(getStatusString(row['INTSTATUS'] as int)),
+                    receiptType: ReceiptType.findByName(getTypeString(row['INTTYPE'] as int)),
+                    group: Group.findByImportid(row["GROUPSIDS"] as String)?: Group.findByName(Group.ROOT),
+                    description: row["DESCRIPTION"] as String,
+                    contact: Contact.findByImportid(row["CONTACTSIDS"] as String)?:Contact.findByName("missing"),
+                    netValue: row['NETVALUE'] as BigDecimal,
+                    taxValue: row['TAXVALUE'] as BigDecimal,
+                    discountValue: row['DISCOUNTVALUE'] as BigDecimal,
+                    shippingValue: row['SHIPPINGVALUE'] as BigDecimal,
+                    todoDate: row['DATETODO'] as Date,
+                    endDate: row['DATEEND'] as Date,
+                    reminders: row['INTREMINDERS'] as int
+            ).save()
         })
         Receipt.withSession {
             it.flush()
@@ -126,6 +143,31 @@ class BootStrap {
     public static final int TYPE_OFFER = 2;
     public static final int TYPE_DELIVERY_NOTE = 3;
     public static final int TYPE_ORDER_CONFIRMATION = 4;
+    public static final int STATUS_QUEUED = 0;
+    public static final int STATUS_IN_PROGRESS = 1;
+    public static final int STATUS_PAUSED = 2;
+    public static final int STATUS_FINISHED = 3;
+    public static final int STATUS_PAID = 4;
+    public static final int STATUS_CANCELLED = 5;
+
+
+    static String getStatusString(int status) {
+        switch (status) {
+            case (STATUS_QUEUED):
+                return "Queued".toString();
+            case (STATUS_IN_PROGRESS):
+                return "In Progress".toString();
+            case (STATUS_PAUSED):
+                return "Paused".toString();
+            case (STATUS_FINISHED):
+                return "Finished".toString();
+            case (STATUS_PAID):
+                return "Paid".toString();
+            case (STATUS_CANCELLED):
+                return "Cancelled".toString();
+        }
+        return "NA".toString();
+    }
 
     static String getTypeString(Integer type) {
         if (type == null) {
@@ -133,15 +175,15 @@ class BootStrap {
         }
         switch (type) {
             case (TYPE_INVOICE):
-                return "TYPE_INVOICE".toString();
+                return "Invoice".toString();
             case (TYPE_OFFER):
-                return "TYPE_OFFER".toString();
+                return "Offer".toString();
             case (TYPE_ORDER):
-                return "TYPE_ORDER".toString();
+                return "Order".toString();
             case (TYPE_ORDER_CONFIRMATION):
-                return "TYPE_CONFIRMATION".toString();
+                return "Order Confirmation".toString();
             case (TYPE_DELIVERY_NOTE):
-                return "TYPE_DELIVERY".toString();
+                return "Delivery Note".toString();
         }
         return "";
     }
@@ -157,5 +199,13 @@ class BootStrap {
         new ReceiptType(name: "Order").save(flush: true)
         new ReceiptType(name: "Offer").save(flush: true)
         new ReceiptType(name: "Delivery Note").save(flush: true)
+        new ReceiptType(name: "Order Confirmation").save(flush: true)
+
+        new ReceiptStatus(name: "Queued").save(flush: true)
+        new ReceiptStatus(name: "In Progress").save(flush: true)
+        new ReceiptStatus(name: "Paused").save(flush: true)
+        new ReceiptStatus(name: "Finished").save(flush: true)
+        new ReceiptStatus(name: "Paid").save(flush: true)
+        new ReceiptStatus(name: "Cancelled").save(flush: true)
     }
 }
