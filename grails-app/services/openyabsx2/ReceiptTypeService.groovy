@@ -21,7 +21,7 @@ abstract class ReceiptTypeService {
     boolean execute(String event, Receipt receipt){
         String script = receipt.getReceiptType()?.getProperty("${event}Script")
         if(script == null){
-            log.info("No '$event' script for $receipt found")
+            //log.info("No '$event' script for $receipt found")
             return true
         }
         //fixme cache compiled script

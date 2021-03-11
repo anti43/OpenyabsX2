@@ -7,6 +7,7 @@ import org.springframework.context.annotation.DeferredImportSelector
 import javax.swing.GroupLayout
 
 class BootStrap {
+    //https://github.com/monetschemist/grails-datatables
     def grailsApplication
 
     def init = { servletContext ->
