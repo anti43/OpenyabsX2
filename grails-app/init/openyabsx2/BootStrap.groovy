@@ -116,7 +116,7 @@ class BootStrap {
                 " CNAME, CNUMBER, DESCRIPTION, GROUPSIDS, ACCOUNTSIDS, CONTACTSIDS, NETVALUE, TAXVALUE, " +
                 "DISCOUNTVALUE, SHIPPINGVALUE, DATETODO, DATEEND, INTREMINDERS, INTTYPE, DATEADDED, INTADDEDBY, " +
                 "INVISIBLE, INTSTATUS, HIERARCHYPATH, RESERVE1, RESERVE2, DISCOUNTGROSVALUE, REFORDERIDS" +
-                " from items a", { row ->
+                " from items a where ids<11", { row ->
 
             new Receipt(cnumber: row['CNUMBER'] as String,
                     receiptStatus: ReceiptStatus.findByName(getStatusString(row['INTSTATUS'] as int)),

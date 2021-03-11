@@ -1,5 +1,6 @@
 package openyabsx2
 
+import grails.converters.JSON
 import grails.plugin.springsecurity.annotation.Secured
 import grails.validation.ValidationException
 import static org.springframework.http.HttpStatus.*
@@ -8,11 +9,31 @@ import static org.springframework.http.HttpStatus.*
 class ContactController {
 
     ContactService contactService
+    DataService dataService
+
+    static dataTableConfig =  [headerList : [
+            [name: "id", messageBundleKey: "id", returnValuePropertyOrCode: "id", sortPropertyName: "id", hidden: true],
+            [name: "cnumber", messageBundleKey: "openyabsx2.contact.cnumber", returnValuePropertyOrCode: "cnumber", sortPropertyName: "cnumber"],
+            [name: "name", messageBundleKey: "openyabsx2.contact.name", returnValuePropertyOrCode: "name",sortPropertyName: "name"]
+    ]]
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-    def index(Integer max) {
-        respond contactService.list(params), model:[contactCount: contactService.count()]
+    def index() {
+        render view: "index"
+    }
+
+    def indexData() {
+        //respond contactService.list(params), model:[contactCount: contactService.count()]
+
+        def offset = params.iDisplayStart ? Integer.parseInt(params.iDisplayStart) : 0
+        def max = params.iDisplayLength ? Integer.parseInt(params.iDisplayLength) : 10
+        def sortOrder = params.sSortDir_0 ? params.sSortDir_0 : "desc"
+        def sortBy = dataService.getPropertyNameByIndex(dataTableConfig, params.iSortCol_0 as Integer)
+        def searchString = params.sSearch
+        def returnList = contactService.list([offset:offset, max:max, order: sortOrder, sort: sortBy ])
+        def returnMap = dataService.createResponseForTable(dataTableConfig, returnList, "contacts", params.sEcho)
+        render returnMap as JSON
     }
 
     def show(Long id) {

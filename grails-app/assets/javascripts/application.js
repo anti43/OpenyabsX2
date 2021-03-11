@@ -16,7 +16,7 @@
 
 jQuery(document).ready(function () {
 
-    var tables = jQuery("table");
+    /*var tables = jQuery("table");
 
 
     tables.addClass("table table-bordered table-striped table-condensed table-hover");
@@ -56,7 +56,7 @@ jQuery(document).ready(function () {
 
     var x = jQuery('th.sortable a');
     x.css('pointer-events', 'none');
-    x.css('cursor', 'default');
+    x.css('cursor', 'default');*/
 
 
     jQuery("select").chosen();

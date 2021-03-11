@@ -18,11 +18,8 @@
             <g:if test="${flash.message}">
                 <div class="message" role="status">${flash.message}</div>
             </g:if>
-            <f:table collection="${contactList}" />
 
-            <div class="pagination">
-                <g:paginate total="${contactCount ?: 0}" />
-            </div>
+            <dataTable:table id="contacts" serverURL="${createLink(controller: "contact",action: "indexData")}" config="${openyabsx2.ContactController.dataTableConfig}"></dataTable:table>
         </div>
     </body>
 </html>
