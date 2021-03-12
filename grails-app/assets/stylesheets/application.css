@@ -23,6 +23,7 @@
     /* this fix is needed for IE7- */
 }
 
-table {
+.yabs-data table {
+    width: 100%!important;
 }
 

@@ -4,7 +4,7 @@ package openyabsx2
  * Based on https://dzone.com/articles/using-datatablesnet-grails
  */
 class DataTableTagLib {
-    static defaultEncodeAs = [taglib:'raw']
+    static defaultEncodeAs = [taglib: 'raw']
     //static encodeAsForTags = [tagName: [taglib:'html'], otherTagName: [taglib:'none']]
     def springSecurityService
     static namespace = "dataTable"
@@ -14,35 +14,34 @@ class DataTableTagLib {
         def dataTableHeaderListConfig = attrs.config.headerList
         def removeSorting = false
         def serverURL = attrs.serverURL
-        def fixedClass=attrs.fixedTableClass?:'noClass'
+        def fixedClass = attrs.fixedTableClass ?: 'noClass'
 
-        println "fixedClass=="+fixedClass
-
-        out << """
+        out << """ 
+            <div class="yabs-data">
             <table id="${attrs.id}" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered ${fixedClass}">
             <thead>
             <tr>"""
 
         dataTableHeaderListConfig.each {
-            out << """  <th style="cursor: pointer;" sortPropertyName="${it.sortPropertyName}" sortable="${it.sortable}" """
+            out << """  <th style="cursor: pointer;" sortPropertyName="${it.sortPropertyName?:it.name}" sortable="${it.sortable?:true}" """
             out << """>"""
-            out << g.message(code: it.messageBundleKey, default: it.name)
+            out << g.message(code: it.messageBundleKey?:("openyabsx2.contact.${it.name}"), default: it.name)
             out << """</th> """
         }
-
 
         out << """</tr>
             </thead>
             <tbody>
 
             </tbody>
-            </table>
+            </table> 
+            </div>
                 <script type="text/javascript">
                 var dataTableDefaultSorting = [];
                 var hideSorting = [];
 
                 """
-        dataTableHeaderListConfig.eachWithIndex {obj, i ->
+        dataTableHeaderListConfig.eachWithIndex { obj, i ->
             if (obj.defaultSorting) {
                 out << """ dataTableDefaultSorting[dataTableDefaultSorting.length]=[${i},'${obj.defaultSortOrder}'];
                      """
@@ -63,10 +62,14 @@ class DataTableTagLib {
 
                    jQuery(document).ready( function() {
                        var ${attrs.id}oTableCurrentData;
-                       var ${attrs.id}oTable =  jQuery('#${attrs.id}').dataTable({
-                            "aaSorting":dataTableDefaultSorting,
-                            "bProcessing": true,
-                            "bServerSide": true,"""
+                       var ${attrs.id}oTable = jQuery('#${attrs.id}').dataTable({
+                               "aaSorting":dataTableDefaultSorting,
+                               "processing": true,
+                               "serverSide": true,
+                               "select": true,
+                               "deferRender": true,
+                               "responsive": true, 
+                               "colReorder": true, """
         if (attrs.serverParamsFunction) {
             out << """
                                 "fnServerParams":  function(aoData){
@@ -78,9 +81,6 @@ class DataTableTagLib {
                                 },
                                   """
         }
-
-//drawLabelElementId => This variable is set from the dashboard  where we need to set count after the table is full loaded,we can implement this in other details page as well.
-        println("Removing Sort Status : ${removeSorting}")
         if (removeSorting) {
             out << """
                         "aoColumnDefs": [{
@@ -90,11 +90,8 @@ class DataTableTagLib {
                     """
         }
 
-        out <<
-                """
+        out << """
             "fnDrawCallback": function(oSettings) {
-
-
                   var drawLabel='${attrs.drawLabelElementId}';
                              if(drawLabel!='null'){
                         jQuery('${attrs.drawLabelElementId}').html("["+oSettings._iRecordsTotal+"]");
@@ -103,72 +100,62 @@ class DataTableTagLib {
                     if(callBackFunction!='null'){
                     ${attrs.id}CallBackFunction(oSettings._iRecordsTotal);
                 }
-                        },
+            },
         """
-
-
         out << """
-                            "sAjaxSource": "${serverURL}",
-                            "sDom": "<'row'<'col-md-6'l><'col-md-6'f>r>t<'row'<'col-md-6'i><'col-md-6'p>>",
-                            "fnCreatedRow":function( nRow, aData, iDataIndex ) {
-                                jQuery(nRow).attr("mphrxRowIndex",iDataIndex);
-                                jQuery(nRow).attr("mphrxRowID",aData[0]);
-
-
+                "sAjaxSource": "${serverURL}",
+                "sDom": "<'row'<'col-md-6'l><'col-md-6'f>r>'<'row''<'col't>><'row'<'col-md-6'i><'col-md-6'p>>",
+                "fnCreatedRow":function( nRow, aData, iDataIndex ) {
+                    jQuery(nRow).attr("mphrxRowIndex",iDataIndex);
+                    jQuery(nRow).attr("mphrxRowID",aData[0]);
                                 """
         if (attrs.contextMenuTarget) {
             out << """
-
                     jQuery(nRow).contextmenu({
-                                  target:'#${attrs.contextMenuTarget}',
-                                  before: function(e, element) {
-                                    ${attrs.id}oTableCurrentData = ${attrs.id}oTable.fnGetData( jQuery(element).attr("mphrxRowIndex") );
-                                    return true;
-                                  },
-                                  onItem: function(e, element) {
-                                    if(${attrs.id}ContextMenuHandler){
-                                        ${attrs.id}ContextMenuHandler(e,element);
-                                    }
-                                  }
-                                })
+                          target:'#${attrs.contextMenuTarget}',
+                          before: function(e, element) {
+                            ${attrs.id}oTableCurrentData = ${attrs.id}oTable.fnGetData( jQuery(element).attr("mphrxRowIndex") );
+                            return true;
+                          },
+                          onItem: function(e, element) {
+                            if(${attrs.id}ContextMenuHandler){
+                                ${attrs.id}ContextMenuHandler(e,element);
+                            }
+                          }
+                    })
 """
         }
 
         out << """
-                            },
-                            "oTableTools": {
-                                "aButtons": [
-                                    "copy",
-                                    "print",
-                                    {
-                                        "sExtends":    "collection",
-                                        "sButtonText": 'Save <span class="caret" />',
-                                        "aButtons":    [ "csv", "xls", "pdf" ]
-                                    }
-                                ]
+                    },
+                    "oTableTools": {
+                        "aButtons": [
+                            "copy",
+                            "print",
+                            {
+                                "sExtends":    "collection",
+                                "sButtonText": 'Save <span class="caret" />',
+                                "aButtons":    [ "csv", "xls", "pdf" ]
                             }
-
-                        });
-                        jQuery('#${attrs.id}_filter input').unbind();
-                        jQuery('#${attrs.id}_filter input').bind('keyup', function(e) {
-                           if(e.keyCode == 13) {
-                            ${attrs.id}oTable.fnFilter(this.value);
-                        }
-                       });
-
+                        ]
+                    }
+                });
+                jQuery('#${attrs.id}_filter input').unbind();
+                jQuery('#${attrs.id}_filter input').bind('keyup', function(e) {
+                   if(e.keyCode == 13) {
+                    ${attrs.id}oTable.fnFilter(this.value);
+                }
+               });
                        """
-
         dataTableHeaderListConfig.eachWithIndex { obj, i ->
-
             if (obj.hidden) {
                 out << """ ${attrs.id}oTable.fnSetColumnVis(${i}, false); """
             }
 
         }
-
         out << """
-                    });
-                </script>
-            """
+        });
+        \$.fn.dataTable.ext.errMode = 'throw';
+</script>"""
     }
 }

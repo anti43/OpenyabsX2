@@ -23,38 +23,27 @@ class DataService {
         try {
             returnMap.iTotalRecords = returnList.totalCount
             returnMap.iTotalDisplayRecords = returnList.totalCount
-        }catch(exp){
+        } catch (exp) {
             returnMap.iTotalRecords = 10000
             returnMap.iTotalDisplayRecords = 10000
         }
         returnMap.sEcho = sEcho
         def dataReturnMap = []
-        if(returnList instanceof Iterator){
-            while(returnList.hasNext()){
-                def eachData = returnList.next()
-                def eachDataArr = []
-                config.headerList.each { eachConfig ->
-                    if (eachConfig.returnValuePropertyOrCode instanceof String) {
-                        eachDataArr << evaluateExpressionOnBean(eachData, "${eachConfig.returnValuePropertyOrCode}")
-                    } else if (eachConfig.returnValuePropertyOrCode instanceof Closure) {
-                        eachDataArr << eachConfig.returnValuePropertyOrCode(eachData)
-                    }
+
+        returnList.each { eachData ->
+            def eachDataArr = []
+            config.headerList.each { eachConfig ->
+                if (eachConfig.returnValuePropertyOrCode instanceof String) {
+                    eachDataArr << evaluateExpressionOnBean(eachData, "${eachConfig.returnValuePropertyOrCode}")
+                } else if (eachConfig.returnValuePropertyOrCode instanceof Closure) {
+                    eachDataArr << eachConfig.returnValuePropertyOrCode(eachData)
+                } else {
+                    eachDataArr << eachData."${eachConfig.name}"
                 }
-                dataReturnMap << eachDataArr
             }
-        }else {
-            returnList.each { eachData ->
-                def eachDataArr = []
-                config.headerList.each { eachConfig ->
-                    if (eachConfig.returnValuePropertyOrCode instanceof String) {
-                        eachDataArr << evaluateExpressionOnBean(eachData, "${eachConfig.returnValuePropertyOrCode}")
-                    } else if (eachConfig.returnValuePropertyOrCode instanceof Closure) {
-                        eachDataArr << eachConfig.returnValuePropertyOrCode(eachData)
-                    }
-                }
-                dataReturnMap << eachDataArr
-            }
+            dataReturnMap << eachDataArr.collect { it as String}
         }
+
         returnMap.aaData = dataReturnMap
         return returnMap
     }
@@ -72,10 +61,10 @@ class DataService {
                 }
             }
         } else {
-            if(beanValue instanceof GormEntity){
+            if (beanValue instanceof GormEntity) {
                 try {
                     cellValue = beanValue?."$expression"
-                }catch(exp){
+                } catch (exp) {
                     cellValue = exp.getMessage()
                 }
             }
@@ -86,6 +75,6 @@ class DataService {
     }
 
     def getPropertyNameByIndex(config, int index) {
-        return config.headerList[index].sortPropertyName
+        return config.headerList[index].sortPropertyName ?: config.headerList[index].name
     }
 }

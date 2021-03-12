@@ -11,10 +11,19 @@ class ContactController {
     ContactService contactService
     DataService dataService
 
+
     static dataTableConfig =  [headerList : [
-            [name: "id", messageBundleKey: "id", returnValuePropertyOrCode: "id", sortPropertyName: "id", hidden: true],
-            [name: "cnumber", messageBundleKey: "openyabsx2.contact.cnumber", returnValuePropertyOrCode: "cnumber", sortPropertyName: "cnumber"],
-            [name: "name", messageBundleKey: "openyabsx2.contact.name", returnValuePropertyOrCode: "name",sortPropertyName: "name"]
+            [name: "id", messageBundleKey: "id", sortPropertyName: "id", hidden: true],
+            [name: "cnumber", messageBundleKey: "openyabsx2.contact.cnumber", sortPropertyName: "cnumber"],
+            [name: "name"],
+            [name: "group"],
+            [name: "prename"],
+            [name: "street"],
+            [name: "city"],
+            [name: "country"],
+            [name: "mainphone"],
+            [name: "mailaddress"],
+            [name: "company"]
     ]]
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
@@ -24,6 +33,7 @@ class ContactController {
     }
 
     def indexData() {
+        println params as String
         //respond contactService.list(params), model:[contactCount: contactService.count()]
 
         def offset = params.iDisplayStart ? Integer.parseInt(params.iDisplayStart) : 0
