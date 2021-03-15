@@ -15,6 +15,7 @@ class ReceiptItem {
     String measurement
     String description
     String linkUrl
+    String name
 
     BigDecimal singleNetValue = BigDecimal.ZERO;
     BigDecimal taxPercentage = BigDecimal.ZERO;

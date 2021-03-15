@@ -11,6 +11,7 @@
 *= require sb-admin-2
 *= require dataTables.bootstrap4
 *= require buttons.bootstrap4
+*= require select.bootstrap4
 *= require chosen
 *= require_self
 */
@@ -26,4 +27,9 @@
 .yabs-data table {
     width: 100%!important;
 }
+
+.yabs-data table td{
+    cursor: pointer;
+}
+
 

@@ -1,18 +1,40 @@
 package openyabsx2
 
+
+import grails.converters.JSON
 import grails.plugin.springsecurity.annotation.Secured
 import grails.validation.ValidationException
+import openyabsx2.*
+
 import static org.springframework.http.HttpStatus.*
+
 @Secured('ROLE_ADMIN')
 class GroupController {
 
     GroupService groupService
+    DataService dataService
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-    def index(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
-        respond groupService.list(params), model:[groupCount: groupService.count()]
+    static dataTableConfig =  [headerList : [
+            [name: "id", messageBundleKey: "id", sortPropertyName: "id", hidden: true],
+            [name: "name", messageBundleKey: "openyabsx2.group.name", sortPropertyName: "name"]
+    ]]
+
+    def index() {
+        render view: "index", model: [tableConfig: dataTableConfig]
+    }
+
+    def indexData() {
+
+        def offset = params.iDisplayStart ? Integer.parseInt(params.iDisplayStart) : 0
+        def max = params.iDisplayLength ? Integer.parseInt(params.iDisplayLength) : 10
+        def sortOrder = params.sSortDir_0 ? params.sSortDir_0 : "desc"
+        def sortBy = dataService.getPropertyNameByIndex(dataTableConfig, params.iSortCol_0 as Integer)
+        def searchString = params.sSearch
+        def returnList = groupService.list([offset:offset, max:max, order: sortOrder, sort: sortBy ])
+        def returnMap = dataService.createResponseForTable(dataTableConfig, returnList, "group-data", params.sEcho)
+        render returnMap as JSON
     }
 
     def show(Long id) {

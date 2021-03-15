@@ -2,6 +2,9 @@ package openyabsx2
 
 import grails.gorm.transactions.Transactional
 import org.grails.datastore.gorm.GormEntity
+import org.grails.datastore.gorm.GormEntityApi
+import org.grails.datastore.gorm.finders.QueryBuildingFinder
+import org.hibernate.Session
 
 /**
  * Based on https://dzone.com/articles/using-datatablesnet-grails
@@ -18,7 +21,7 @@ class DataService {
     * */
 
 
-    def createResponseForTable = { config, returnList, id, sEcho ->
+    def createResponseForTable(config, returnList, id, sEcho) {
         def returnMap = [:]
         try {
             returnMap.iTotalRecords = returnList.totalCount
@@ -76,5 +79,13 @@ class DataService {
 
     def getPropertyNameByIndex(config, int index) {
         return config.headerList[index].sortPropertyName ?: config.headerList[index].name
+    }
+
+    List createFulltextHql(Session session, Class<? extends GormEntity> entity, String needle, Map params){
+        String q = "from ${entity} where "
+        entity.getDeclaredFields().each {
+            q+=" coalesce(${it.getName()}, '')||"
+        }
+        session.getCriteriaBuilder().so
     }
 }

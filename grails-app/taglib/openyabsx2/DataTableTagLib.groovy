@@ -11,7 +11,7 @@ class DataTableTagLib {
 
     def table = { attrs, body ->
 
-        def dataTableHeaderListConfig = attrs.config.headerList
+        def dataTableHeaderListConfig = attrs.config?.headerList?:[]
         def removeSorting = false
         def serverURL = attrs.serverURL
         def fixedClass = attrs.fixedTableClass ?: 'noClass'

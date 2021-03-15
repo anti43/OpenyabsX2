@@ -13,6 +13,7 @@ class Receipt {
     ReceiptType receiptType
     ReceiptStatus receiptStatus
     Receipt previousReceipt
+    String name
     String cnumber // auto filled
     Group group
     String description

@@ -16,17 +16,17 @@ class Contact {
     String zip = ""
     String city = ""
     String country = ""
-    String mainphone = ""
-    String workphone = ""
+    String mainPhone = ""
+    String workPhone = ""
     String fax = ""
-    String mobilephone = ""
-    String mailaddress = ""
+    String mobilePhone = ""
+    String mailAddress = ""
     String website = ""
     String notes = ""
     String company = ""
     String department = ""
     String bankAccount = ""
-    String bankid = ""
+    String bankId = ""
     String bankName = ""
     String bankCurrency = ""
     String bankCountry = ""
@@ -61,17 +61,17 @@ class Contact {
         zip nullable: true
         city nullable: true
         country nullable: true
-        mainphone nullable: true
-        workphone nullable: true
+        mainPhone nullable: true
+        workPhone nullable: true
         fax nullable: true
-        mobilephone nullable: true
-        mailaddress nullable: true
+        mobilePhone nullable: true
+        mailAddress nullable: true
         website nullable: true
         notes nullable: true, type: "text"
         company nullable: true
         department nullable: true
         bankAccount nullable: true
-        bankid nullable: true
+        bankId nullable: true
         bankName nullable: true
         bankCurrency nullable: true
         bankCountry nullable: true

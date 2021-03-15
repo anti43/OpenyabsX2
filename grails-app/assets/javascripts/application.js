@@ -11,6 +11,8 @@
 //= require sb-admin-2
 //= require jquery.dataTables
 //= require dataTables.bootstrap4
+//= require dataTables.select
+//= require select.bootstrap4
 //= require chosen.jquery
 //= require_self
 

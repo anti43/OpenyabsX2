@@ -1,8 +1,11 @@
 package openyabsx2
 
+
 import grails.converters.JSON
 import grails.plugin.springsecurity.annotation.Secured
 import grails.validation.ValidationException
+import openyabsx2.*
+
 import static org.springframework.http.HttpStatus.*
 
 @Secured('ROLE_ADMIN')
@@ -11,8 +14,9 @@ class ContactController {
     ContactService contactService
     DataService dataService
 
+    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-    static dataTableConfig =  [headerList : [
+    static dataTableConfig = [headerList: [
             [name: "id", messageBundleKey: "id", sortPropertyName: "id", hidden: true],
             [name: "cnumber", messageBundleKey: "openyabsx2.contact.cnumber", sortPropertyName: "cnumber"],
             [name: "name"],
@@ -21,29 +25,29 @@ class ContactController {
             [name: "street"],
             [name: "city"],
             [name: "country"],
-            [name: "mainphone"],
-            [name: "mailaddress"],
+            [name: "mainPhone"],
+            [name: "mailAddress"],
             [name: "company"]
     ]]
 
-    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
-
     def index() {
-        render view: "index"
+        render view: "index", model: [tableConfig: dataTableConfig]
     }
 
     def indexData() {
-        println params as String
-        //respond contactService.list(params), model:[contactCount: contactService.count()]
 
         def offset = params.iDisplayStart ? Integer.parseInt(params.iDisplayStart) : 0
         def max = params.iDisplayLength ? Integer.parseInt(params.iDisplayLength) : 10
         def sortOrder = params.sSortDir_0 ? params.sSortDir_0 : "desc"
         def sortBy = dataService.getPropertyNameByIndex(dataTableConfig, params.iSortCol_0 as Integer)
         def searchString = params.sSearch
-        def returnList = contactService.list([offset:offset, max:max, order: sortOrder, sort: sortBy ])
-        def returnMap = dataService.createResponseForTable(dataTableConfig, returnList, "contacts", params.sEcho)
-        render returnMap as JSON
+
+        Contact.withSession { session ->
+            def returnList = dataService.createFulltextHql(session, Contact.class, searchString, [offset: offset, max: max, order: sortOrder, sort: sortBy])
+            def returnMap = dataService.createResponseForTable(dataTableConfig, returnList, "contact-data", params.sEcho)
+            render returnMap as JSON
+        }
+
     }
 
     def show(Long id) {
@@ -63,7 +67,7 @@ class ContactController {
         try {
             contactService.save(contact)
         } catch (ValidationException e) {
-            respond contact.errors, view:'create'
+            respond contact.errors, view: 'create'
             return
         }
 
@@ -89,7 +93,7 @@ class ContactController {
         try {
             contactService.save(contact)
         } catch (ValidationException e) {
-            respond contact.errors, view:'edit'
+            respond contact.errors, view: 'edit'
             return
         }
 
@@ -98,7 +102,7 @@ class ContactController {
                 flash.message = message(code: 'default.updated.message', args: [message(code: 'contact.label', default: 'Contact'), contact.id])
                 redirect contact
             }
-            '*'{ respond contact, [status: OK] }
+            '*' { respond contact, [status: OK] }
         }
     }
 
@@ -113,9 +117,9 @@ class ContactController {
         request.withFormat {
             form multipartForm {
                 flash.message = message(code: 'default.deleted.message', args: [message(code: 'contact.label', default: 'Contact'), id])
-                redirect action:"index", method:"GET"
+                redirect action: "index", method: "GET"
             }
-            '*'{ render status: NO_CONTENT }
+            '*' { render status: NO_CONTENT }
         }
     }
 
@@ -125,7 +129,7 @@ class ContactController {
                 flash.message = message(code: 'default.not.found.message', args: [message(code: 'contact.label', default: 'Contact'), params.id])
                 redirect action: "index", method: "GET"
             }
-            '*'{ render status: NOT_FOUND }
+            '*' { render status: NOT_FOUND }
         }
     }
 }
