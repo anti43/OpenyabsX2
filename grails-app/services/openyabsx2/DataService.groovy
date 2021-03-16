@@ -23,8 +23,8 @@ class DataService {
     def createResponseForTable(config, returnList, id, sEcho) {
         def returnMap = [:]
         try {
-            returnMap.iTotalRecords = returnList.totalCount
-            returnMap.iTotalDisplayRecords = returnList.totalCount
+            returnMap.iTotalRecords = returnList.size
+            returnMap.iTotalDisplayRecords = returnList.size
         } catch (exp) {
             returnMap.iTotalRecords = 10000
             returnMap.iTotalDisplayRecords = 10000
@@ -81,10 +81,13 @@ class DataService {
     }
 
     List createFulltextHql(Class<? extends GormEntity> entity, String needle, Map params) {
-        def ids = SearchEntry.findAllByObjectClassAndDataIlike(entity.getName(), "%$needle%", params).collect {
+        def ids = SearchEntry.findAllByObjectClassAndDataIlike(entity.getName(), "%$needle%").collect {
             it.id
         } as List<Long>
         if (!ids) return []
-        return sessionFactory.currentSession.createQuery("from ${entity.getName()} where id in ($ids)").getResultList()
+        def query = sessionFactory.currentSession.createQuery("from ${entity.getName()} where id in (${ids.join(",")})")
+        query.setFetchSize(params.limit ?: 0)
+        query.setFirstResult(params.offset ?: 0)
+        return query.getResultList()
     }
 }
