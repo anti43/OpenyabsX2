@@ -81,4 +81,31 @@ class Contact {
     String toString(){
         name
     }
+
+
+    /**
+     * Executed after an object is persisted to the database*/
+    def afterInsert() {
+        SearchEntry.createFor(this)
+        HistoryLogEntry.createFor(name: "created: $cnumber", objectId: getId(), objectClass: getClass().name, user: springSecurityService.currentUser ?: User.list().find())
+    }
+
+    /**
+     * Executed after an object has been updated*/
+    def afterUpdate() {
+        SearchEntry.updateFor(this)
+        HistoryLogEntry.createFor(name: "updated: $cnumber", objectId: getId(), objectClass: getClass().name, user: springSecurityService.currentUser ?: User.list().find())
+    }
+
+    /**
+     * Executed after an object has been deleted*/
+    def afterDelete() {
+        SearchEntry.removeFor(this)
+    }
+
+    /**
+     * Executed when an object is loaded from the database*/
+    def onLoad() {
+        log.info("Loaded $this")
+    }
 }

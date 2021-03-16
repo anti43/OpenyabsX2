@@ -14,5 +14,4 @@ interface ReceiptItemService {
     void delete(Serializable id)
 
     ReceiptItem save(ReceiptItem receiptItem)
-
 }

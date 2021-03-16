@@ -14,5 +14,4 @@ interface ContactService {
     void delete(Serializable id)
 
     Contact save(Contact contact)
-
 }

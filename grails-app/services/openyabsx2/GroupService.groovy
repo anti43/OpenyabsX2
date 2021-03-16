@@ -14,5 +14,4 @@ interface GroupService {
     void delete(Serializable id)
 
     Group save(Group group)
-
 }

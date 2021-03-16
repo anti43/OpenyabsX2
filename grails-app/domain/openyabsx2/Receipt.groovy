@@ -78,7 +78,9 @@ class Receipt {
     /**
      * Executed after an object is persisted to the database*/
     def afterInsert() {
-        new HistoryLogEntry(name: "$receiptType created: $this", objectId: getId(), objectClass: getClass().name, user: springSecurityService.currentUser?:User.list().find()).save()
+        log.warn("afterInsert $this")
+        SearchEntry.createFor(this)
+        HistoryLogEntry.createFor(name: "$receiptType created: $cnumber", objectId: getId(), objectClass: getClass().name, user: springSecurityService.currentUser ?: User.list().find())
         receiptTypeService.execute("afterInsert", this)
         receiptStatusService.execute("afterInsert", this)
     }
@@ -86,6 +88,8 @@ class Receipt {
     /**
      * Executed after an object has been updated*/
     def afterUpdate() {
+        SearchEntry.updateFor(this)
+        HistoryLogEntry.createFor(name: "$receiptType updated: $cnumber", objectId: getId(), objectClass: getClass().name, user: springSecurityService.currentUser ?: User.list().find())
         receiptTypeService.execute("afterUpdate", this)
         receiptStatusService.execute("afterUpdate", this)
     }
@@ -93,6 +97,7 @@ class Receipt {
     /**
      * Executed after an object has been deleted*/
     def afterDelete() {
+        SearchEntry.removeFor(this)
         receiptTypeService.execute("afterDelete", this)
         receiptStatusService.execute("afterDelete", this)
     }

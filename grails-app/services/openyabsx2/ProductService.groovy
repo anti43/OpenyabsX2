@@ -14,5 +14,4 @@ interface ProductService {
     void delete(Serializable id)
 
     Product save(Product product)
-
 }

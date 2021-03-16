@@ -1,15 +1,14 @@
 package openyabsx2
 
-import grails.gorm.transactions.Transactional
+
 import org.grails.datastore.gorm.GormEntity
-import org.grails.datastore.gorm.GormEntityApi
-import org.grails.datastore.gorm.finders.QueryBuildingFinder
-import org.hibernate.Session
+import org.hibernate.SessionFactory
 
 /**
  * Based on https://dzone.com/articles/using-datatablesnet-grails
  * */
 class DataService {
+    SessionFactory sessionFactory
 
     /*
     headerList = [
@@ -44,7 +43,7 @@ class DataService {
                     eachDataArr << eachData."${eachConfig.name}"
                 }
             }
-            dataReturnMap << eachDataArr.collect { it as String}
+            dataReturnMap << eachDataArr.collect { it as String }
         }
 
         returnMap.aaData = dataReturnMap
@@ -81,11 +80,11 @@ class DataService {
         return config.headerList[index].sortPropertyName ?: config.headerList[index].name
     }
 
-    List createFulltextHql(Session session, Class<? extends GormEntity> entity, String needle, Map params){
-        String q = "from ${entity} where "
-        entity.getDeclaredFields().each {
-            q+=" coalesce(${it.getName()}, '')||"
-        }
-        session.getCriteriaBuilder().so
+    List createFulltextHql(Class<? extends GormEntity> entity, String needle, Map params) {
+        def ids = SearchEntry.findAllByObjectClassAndDataIlike(entity.getName(), "%$needle%", params).collect {
+            it.id
+        } as List<Long>
+        if (!ids) return []
+        return sessionFactory.currentSession.createQuery("from ${entity.getName()} where id in ($ids)").getResultList()
     }
 }

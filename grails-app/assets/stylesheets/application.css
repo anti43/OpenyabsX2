@@ -25,11 +25,20 @@
 }
 
 .yabs-data table {
-    width: 100%!important;
+    margin: 0 auto;
+    width: 100%;
+    clear: both;
+    border-collapse: collapse;
+    table-layout: fixed;
+    word-wrap:break-word;
 }
 
 .yabs-data table td{
     cursor: pointer;
+}
+
+.yabs-data {
+    padding: 0;
 }
 
 

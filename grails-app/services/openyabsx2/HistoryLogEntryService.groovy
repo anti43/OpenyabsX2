@@ -14,5 +14,4 @@ interface HistoryLogEntryService {
     void delete(Serializable id)
 
     HistoryLogEntry save(HistoryLogEntry historyLogEntry)
-
 }

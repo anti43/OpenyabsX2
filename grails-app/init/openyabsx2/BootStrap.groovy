@@ -118,7 +118,9 @@ class BootStrap {
                 "INVISIBLE, INTSTATUS, HIERARCHYPATH, RESERVE1, RESERVE2, DISCOUNTGROSVALUE, REFORDERIDS" +
                 " from items a where ids<11", { row ->
 
-            new Receipt(cnumber: row['CNUMBER'] as String,
+            new Receipt(
+                    name: row['CNAME'] as String,
+                    cnumber: row['CNUMBER'] as String,
                     receiptStatus: ReceiptStatus.findByName(getStatusString(row['INTSTATUS'] as int)),
                     receiptType: ReceiptType.findByName(getTypeString(row['INTTYPE'] as int)),
                     group: Group.findByImportid(row["GROUPSIDS"] as String)?: Group.findByName(Group.ROOT),
@@ -131,7 +133,7 @@ class BootStrap {
                     todoDate: row['DATETODO'] as Date,
                     endDate: row['DATEEND'] as Date,
                     reminders: row['INTREMINDERS'] as int
-            ).save(failOnError: false)
+            ).save(failOnError: true)
         })
         Receipt.withSession {
             it.flush()

@@ -21,3 +21,7 @@ Geplante Features:
 Später:
 
  - WSIWYG Editor für eigene Ansichten und Templates
+ - Shopify Anbindung
+ - zugpferd Rechnungen
+ - PDF/a Export
+

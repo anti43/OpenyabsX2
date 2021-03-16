@@ -42,12 +42,13 @@ class ContactController {
         def sortBy = dataService.getPropertyNameByIndex(dataTableConfig, params.iSortCol_0 as Integer)
         def searchString = params.sSearch
 
-        Contact.withSession { session ->
-            def returnList = dataService.createFulltextHql(session, Contact.class, searchString, [offset: offset, max: max, order: sortOrder, sort: sortBy])
-            def returnMap = dataService.createResponseForTable(dataTableConfig, returnList, "contact-data", params.sEcho)
-            render returnMap as JSON
-        }
+        def args = [offset: offset, max: max, order: sortOrder, sort: sortBy]
 
+        def returnList = searchString?.trim() ?
+                dataService.createFulltextHql(Contact.class, searchString, args) :
+                contactService.list(args)
+        def returnMap = dataService.createResponseForTable(dataTableConfig, returnList, "contact-data", params.sEcho)
+        render returnMap as JSON
     }
 
     def show(Long id) {

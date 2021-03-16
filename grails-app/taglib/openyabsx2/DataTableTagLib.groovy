@@ -65,10 +65,10 @@ class DataTableTagLib {
                        var ${attrs.id}oTable = jQuery('#${attrs.id}').dataTable({
                                "aaSorting":dataTableDefaultSorting,
                                "processing": true,
-                               "serverSide": true,
+                               "serverSide": true, 
                                "select": true,
                                "deferRender": true,
-                               "responsive": true, 
+                               "responsive": false, 
                                "colReorder": true, """
         if (attrs.serverParamsFunction) {
             out << """
