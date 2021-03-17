@@ -15,6 +15,9 @@
 *= require chosen
 *= require_self
 */
+.nav ul {
+    padding: 0;
+}
 
 .nav ul > li {
     display: inline-block;
@@ -30,7 +33,7 @@
     clear: both;
     border-collapse: collapse;
     table-layout: fixed;
-    word-wrap:break-word;
+    word-wrap:normal;
 }
 
 .yabs-data table td{
@@ -39,6 +42,14 @@
 
 .yabs-data {
     padding: 0;
+    margin: 0;
 }
 
+.yabs-data-inner .d-flex{
+    flex-basis: 100%;
+}
+
+.filterl{
+    margin-right: 12px;
+}
 

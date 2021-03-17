@@ -18,7 +18,7 @@
             <g:if test="${flash.message}">
                 <div class="alert alert-info" role="status">${flash.message}</div>
             </g:if>
-            <div class="yabs-data container">
+            <div class="yabs-data">
                 <dataTable:table id="contactData"
                                  serverURL="${createLink(controller: 'contact', action: 'indexData')}"
                                  config="${tableConfig}"/>

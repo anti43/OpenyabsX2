@@ -17,7 +17,7 @@ class DataTableTagLib {
         def fixedClass = attrs.fixedTableClass ?: 'noClass'
 
         out << """ 
-            <div class="yabs-data">
+            <div class="yabs-data-inner">
             <table id="${attrs.id}" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered ${fixedClass}">
             <thead>
             <tr>"""
@@ -68,7 +68,8 @@ class DataTableTagLib {
                                "serverSide": true, 
                                "select": true,
                                "deferRender": true,
-                               "responsive": false, 
+                               "responsive": true, 
+                               "autoWidth": true,
                                "colReorder": true, """
         if (attrs.serverParamsFunction) {
             out << """
@@ -104,7 +105,7 @@ class DataTableTagLib {
         """
         out << """
                 "sAjaxSource": "${serverURL}",
-                "sDom": "<'row'<'col-md-6'l><'col-md-6'f>r>'<'row''<'col't>><'row'<'col-md-6'i><'col-md-6'p>>",
+                "sDom": "<'d-flex justify-content-end'<'filterl'l> - <'filters'f>r>'<'row''<'col't>><'row'<'col-md-6'i><'col-md-6'p>>",
                 "fnCreatedRow":function( nRow, aData, iDataIndex ) {
                     jQuery(nRow).attr("mphrxRowIndex",iDataIndex);
                     jQuery(nRow).attr("mphrxRowID",aData[0]);

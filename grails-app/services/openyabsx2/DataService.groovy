@@ -85,9 +85,23 @@ class DataService {
             it.id
         } as List<Long>
         if (!ids) return []
-        def query = sessionFactory.currentSession.createQuery("from ${entity.getName()} where id in (${ids.join(",")})")
+        def query = sessionFactory.currentSession.createQuery("from ${entity.getName()} where id in (${ids.join(",")}) order by ${params.sort ?: 'id'} ${params.order ?: 'desc'}")
         query.setFetchSize(params.limit ?: 0)
         query.setFirstResult(params.offset ?: 0)
         return query.getResultList()
+    }
+
+    Map<String, List<GormEntity>> searchEverywhere(String needle) {
+        def result = [:]
+        SearchEntry.findAllByDataIlike("%$needle%").each {
+            if (!result.containsKey(it.getObjectClass())) result.put(it.getObjectClass(), [])
+            result.get(it.getObjectClass()).add(it.getObjectId())
+        }
+        if (!result) return []
+        def data = [:]
+        result.each { k, v ->
+            data.put(k, sessionFactory.currentSession.createQuery("from ${k} where id in (${v.join(",")})").getResultList())
+        }
+        return data
     }
 }
