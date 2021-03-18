@@ -18,7 +18,7 @@ class DataTableTagLib {
 
         out << """ 
             <div class="yabs-data-inner">
-            <table id="${attrs.id}" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered ${fixedClass}">
+            <table id="${attrs.id}" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered ${fixedClass} float-left">
             <thead>
             <tr>"""
 
@@ -105,7 +105,7 @@ class DataTableTagLib {
         """
         out << """
                 "sAjaxSource": "${serverURL}",
-                "sDom": "<'d-flex justify-content-end'<'filterl'l> - <'filters'f>r>'<'row''<'col't>><'row'<'col-md-6'i><'col-md-6'p>>",
+                "sDom": "<'container-fluid'<'row'<'col-sm-2'<'float-left'l>><'col'B><'col'<'float-right'f>>r>'<'row''<'col't>><'row'<'col-md-6'i><'col-md-6'p>>>",
                 "fnCreatedRow":function( nRow, aData, iDataIndex ) {
                     jQuery(nRow).attr("mphrxRowIndex",iDataIndex);
                     jQuery(nRow).attr("mphrxRowID",aData[0]);
@@ -129,17 +129,12 @@ class DataTableTagLib {
 
         out << """
                     },
-                    "oTableTools": {
-                        "aButtons": [
-                            "copy",
-                            "print",
-                            {
-                                "sExtends":    "collection",
-                                "sButtonText": 'Save <span class="caret" />',
-                                "aButtons":    [ "csv", "xls", "pdf" ]
-                            }
-                        ]
-                    }
+                    buttons: [ 'print',
+                                {
+                                    extend: 'copyHtml5',
+                                    exportOptions: { orthogonal: 'export' }
+                                } 
+                            ] 
                 });
                 jQuery('#${attrs.id}_filter input').unbind();
                 jQuery('#${attrs.id}_filter input').bind('keyup', function(e) {

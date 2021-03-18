@@ -7,6 +7,7 @@
 * You're free to add application-wide styles to this file and they'll appear at the top of the
 * compiled file, but it's generally better to create a new file per style scope.
 *
+*= require fa.all
 *= require bootstrap
 *= require sb-admin-2
 *= require dataTables.bootstrap4
@@ -49,7 +50,15 @@
     flex-basis: 100%;
 }
 
+.yabs-data .container-fluid {
+    padding: 0;
+}
+
 .filterl{
     margin-right: 12px;
 }
 
+#sidebarToggle{
+    color: #fff;
+
+}
