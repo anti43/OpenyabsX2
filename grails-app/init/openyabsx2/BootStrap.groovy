@@ -43,6 +43,8 @@ class BootStrap {
     @Transactional
     void importLegacy() {
 
+        def countries = [:]
+
         def derbyPath = grailsApplication.config.getProperty('yabs.legacy.derby.path')
         if (!new File(derbyPath as String).exists()) {
             log.warn("Path ${derbyPath} does not exist")
@@ -68,6 +70,13 @@ class BootStrap {
                 it.flush()
             }
         })
+        sql.eachRow("select IDS, CNAME, ISO from COUNTRIES a", {
+            it.eachRow { row ->
+                countries.put(row["ISO"] as String, row["CNAME"])
+            }
+        })
+        log.info(countries as String)
+
         sql.eachRow("select a.IDS, CNUMBER, TAXNUMBER, TITLE, GROUPSIDS, COUNTRY, PRENAME, CNAME, STREET, ZIP, CITY, MAINPHONE, FAX, MOBILEPHONE, WORKPHONE, MAILADDRESS, " +
                 "COMPANY, DEPARTMENT, WEBSITE, NOTES, DATEADDED, ISACTIVE, ISCUSTOMER, ISMANUFACTURER, ISSUPPLIER, ISCOMPANY, ISMALE, ISENABLED, INTADDEDBY, INVISIBLE, RESERVE1, RESERVE2, " +
                 "BANKACCOUNT, BANKID, BANKNAME, BANKCURRENCY, BANKCOUNTRY, PAYTERM from contacts a order by IDS", {
@@ -97,8 +106,8 @@ class BootStrap {
                         bankid: row["BANKID"] as String,
                         bankName: row["BANKNAME"] as String,
                         bankCurrency: row["BANKCURRENCY"] as String,
-                        bankCountry: row["BANKCOUNTRY"] as String,
-                        country: row["COUNTRY"] as String,
+                        bankCountry: countries.get(row["BANKCOUNTRY"] as String)?:row["BANKCOUNTRY"] as String,
+                        country: countries.get(row["COUNTRY"] as String)?:row["COUNTRY"] as String,
 
                         isEnabled: row["ISACTIVE"] as Boolean,
                         isCustomer: row["ISCUSTOMER"] as Boolean,

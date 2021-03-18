@@ -5,6 +5,8 @@ import org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverte
 
 import java.nio.charset.StandardCharsets
 
+
+logger("org.hibernate.orm.deprecation", ERROR)
 conversionRule 'clr', ColorConverter
 conversionRule 'wex', WhitespaceThrowableProxyConverter
 
