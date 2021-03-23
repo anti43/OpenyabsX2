@@ -15,6 +15,7 @@ class DataTableTagLib {
         def removeSorting = false
         def serverURL = attrs.serverURL
         def fixedClass = attrs.fixedTableClass ?: 'noClass'
+        def controller = attrs.controller?:"?"
 
         out << """ 
             <div class="yabs-data-inner">
@@ -25,7 +26,7 @@ class DataTableTagLib {
         dataTableHeaderListConfig.each {
             out << """  <th style="cursor: pointer;" sortPropertyName="${it.sortPropertyName?:it.name}" sortable="${it.sortable?:true}" """
             out << """>"""
-            out << g.message(code: it.messageBundleKey?:("openyabsx2.contact.${it.name}"), default: it.name)
+            out << g.message(code: it.messageBundleKey?:("openyabsx2.${controller}.${it.name}"), default: it.name)
             out << """</th> """
         }
 
@@ -141,6 +142,7 @@ class DataTableTagLib {
                    if(e.keyCode == 13) {
                     ${attrs.id}oTable.fnFilter(this.value);
                 }
+              
                });
                        """
         dataTableHeaderListConfig.eachWithIndex { obj, i ->
@@ -150,8 +152,16 @@ class DataTableTagLib {
 
         }
         out << """
+            jQuery('#${attrs.id} tbody').on('dblclick', 'tr', function () { 
+                 
+                    var data = ${attrs.id}oTable.DataTable().row( this ).data();
+                    window.location = "/${controller}/show/" + data[0];
+                } );
+      
         });
         \$.fn.dataTable.ext.errMode = 'throw';
+        
+      
 </script>"""
     }
 }

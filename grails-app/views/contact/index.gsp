@@ -20,6 +20,7 @@
             </g:if>
             <div class="yabs-data">
                 <dataTable:table id="contactData"
+                                 controller="${params.controller}"
                                  serverURL="${createLink(controller: 'contact', action: 'indexData')}"
                                  config="${tableConfig}"/>
             </div>
