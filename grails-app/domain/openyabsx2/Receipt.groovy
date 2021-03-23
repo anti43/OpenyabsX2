@@ -25,6 +25,7 @@ class Receipt {
     Date todoDate
     Date endDate
     int reminders = 0
+    Date deleted
 
 
     static constraints = {
@@ -37,6 +38,7 @@ class Receipt {
         shippingValue nullable: true
         todoDate nullable: true
         endDate nullable: true
+        deleted nullable: true
     }
 
     static mapping = {
@@ -105,8 +107,18 @@ class Receipt {
     /**
      * Executed when an object is loaded from the database*/
     def onLoad() {
-        log.info("Loaded $this")
+        log.info("Loaded id $id")
         //receiptTypeService.execute("onLoad", this)
     }
 
+    def delete() {
+        deleted = new Date()
+        save()
+        SearchEntry.removeFor(this)
+        getReceiptItems().each {
+            SearchEntry.removeFor(it)
+        }
+        DeletedEntry.createFor(this, springSecurityService.currentUser as User)
+        HistoryLogEntry.createFor(name: "deleted: $cnumber", objectId: getId(), objectClass: getClass().name, user: springSecurityService.currentUser as User)
+    }
 }

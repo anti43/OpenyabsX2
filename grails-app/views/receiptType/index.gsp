@@ -19,6 +19,7 @@
             </g:if>
             <div class="yabs-data container">
                 <dataTable:table id="receiptTypeData"
+                                 controller="${params.controller}"
                                  serverURL="${createLink(controller: 'receiptType', action: 'indexData')}"
                                  config="${tableConfig}"/>
             </div>

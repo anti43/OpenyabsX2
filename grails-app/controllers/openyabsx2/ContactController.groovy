@@ -2,17 +2,25 @@ package openyabsx2
 
 
 import grails.converters.JSON
+import grails.plugin.springsecurity.SpringSecurityService
 import grails.plugin.springsecurity.annotation.Secured
 import grails.validation.ValidationException
+import groovy.json.JsonSlurper
 import openyabsx2.*
+import org.springframework.beans.factory.InitializingBean
 
 import static org.springframework.http.HttpStatus.*
 
 @Secured('ROLE_ADMIN')
-class ContactController {
+class ContactController implements InitializingBean {
+
+    static scope = "session"
 
     ContactService contactService
     DataService dataService
+    SpringSecurityService springSecurityService
+
+    JsonSlurper jsonSlurper = new JsonSlurper()
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
@@ -31,7 +39,7 @@ class ContactController {
     ]]
 
     def index() {
-        render view: "index", model: [tableConfig: dataTableConfig]
+        render view: "index", model: [tableConfig: getUserTableConfig()]
     }
 
     def indexData() {
@@ -39,7 +47,7 @@ class ContactController {
         def offset = params.iDisplayStart ? Integer.parseInt(params.iDisplayStart) : 0
         def max = params.iDisplayLength ? Integer.parseInt(params.iDisplayLength) : 10
         def sortOrder = params.sSortDir_0 ? params.sSortDir_0 : "desc"
-        def sortBy = dataService.getPropertyNameByIndex(dataTableConfig, params.iSortCol_0 as Integer)
+        def sortBy = dataService.getPropertyNameByIndex(getUserTableConfig(), params.iSortCol_0 as Integer)
         def searchString = params.sSearch
 
         def args = [offset: offset, max: max, order: sortOrder, sort: sortBy]
@@ -132,5 +140,14 @@ class ContactController {
             }
             '*' { render status: NOT_FOUND }
         }
+    }
+
+    @Override
+    void afterPropertiesSet() throws Exception {
+        ConfigEntry.getValueForUserOrCreateGlobal("tableconfig.contact-data", springSecurityService.currentUser as User, (dataTableConfig as JSON) as String)
+    }
+
+    Map getUserTableConfig() {
+        jsonSlurper.parseText(ConfigEntry.getValueForUser("tableconfig.contact-data", springSecurityService.currentUser as User).value) as Map
     }
 }

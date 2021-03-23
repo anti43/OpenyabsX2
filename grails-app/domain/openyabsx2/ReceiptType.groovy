@@ -25,4 +25,8 @@ class ReceiptType {
     String toString(){
         name
     }
+
+    static mapping = {
+        cache true
+    }
 }

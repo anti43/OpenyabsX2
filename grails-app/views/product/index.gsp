@@ -19,6 +19,7 @@
             </g:if>
             <div class="yabs-data container">
                 <dataTable:table id="productData"
+                                 controller="${params.controller}"
                                  serverURL="${createLink(controller: 'product', action: 'indexData')}"
                                  config="${tableConfig}"/>
             </div>

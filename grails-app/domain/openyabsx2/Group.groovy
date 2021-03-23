@@ -13,6 +13,7 @@ class Group {
 
     static mapping = {
         table 'groups'
+        cache true
     }
 
     static constraints = {

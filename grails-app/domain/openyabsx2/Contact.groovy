@@ -35,11 +35,12 @@ class Contact {
     boolean isCustomer = false
     boolean isManufacturer = false
     boolean isSupplier = false
+    Date deleted
 
     String importid
 
     def beforeValidate() {
-        cnumber = cnumber?:yabsNumberGeneratorService.nextVal(Contact.class.name)
+        cnumber = cnumber ?: yabsNumberGeneratorService.nextVal(Contact.class.name)
         if (!group) group = Group.findByName(Group.ROOT)
     }
 
@@ -76,9 +77,10 @@ class Contact {
         bankCurrency nullable: true
         bankCountry nullable: true
         companyName nullable: true
+        deleted nullable: true
     }
 
-    String toString(){
+    String toString() {
         name
     }
 
@@ -106,6 +108,14 @@ class Contact {
     /**
      * Executed when an object is loaded from the database*/
     def onLoad() {
-        log.info("Loaded $this")
+        log.info("Loaded id $id")
+    }
+
+    def delete() {
+        deleted = new Date()
+        save()
+        SearchEntry.removeFor(this)
+        DeletedEntry.createFor(this, springSecurityService.currentUser as User)
+        HistoryLogEntry.createFor(name: "deleted: $cnumber", objectId: getId(), objectClass: getClass().name, user: springSecurityService.currentUser as User)
     }
 }
