@@ -42,4 +42,22 @@ class ReceiptItem {
         description type: "text"
         autoTimestamp true
     }
+
+    /**
+     * Executed after an object is persisted to the database*/
+    def afterInsert() {
+        SearchEntry.createFor(this)
+    }
+
+    /**
+     * Executed after an object has been updated*/
+    def afterUpdate() {
+        SearchEntry.updateFor(this)
+    }
+
+    /**
+     * Executed after an object has been deleted*/
+    def afterDelete() {
+        SearchEntry.removeFor(this)
+    }
 }

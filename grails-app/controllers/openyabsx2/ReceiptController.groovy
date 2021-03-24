@@ -2,19 +2,23 @@ package openyabsx2
 
 
 import grails.converters.JSON
+import grails.plugin.springsecurity.SpringSecurityService
 import grails.plugin.springsecurity.annotation.Secured
 import grails.validation.ValidationException
+import groovy.json.JsonSlurper
 import openyabsx2.*
+import org.springframework.beans.factory.InitializingBean
 
 import static org.springframework.http.HttpStatus.*
 
 @Secured('ROLE_ADMIN')
-class ReceiptController {
+class ReceiptController implements InitializingBean, OpenyabsController {
 
     ReceiptService receiptService
     DataService dataService
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+    String receiptDataTableKey= "receipt-data"
 
     static dataTableConfig =  [headerList : [
             [name: "id", messageBundleKey: "id", sortPropertyName: "id", hidden: true],
@@ -32,7 +36,12 @@ class ReceiptController {
         def sortOrder = params.sSortDir_0 ? params.sSortDir_0 : "desc"
         def sortBy = dataService.getPropertyNameByIndex(dataTableConfig, params.iSortCol_0 as Integer)
         def searchString = params.sSearch
-        def returnList = receiptService.list([offset:offset, max:max, order: sortOrder, sort: sortBy ])
+
+        def args = [offset: offset, max: max, order: sortOrder, sort: sortBy]
+
+        def returnList = searchString?.trim() ?
+                dataService.createFulltextHql(Receipt.class, searchString, args) :
+                receiptService.list(args)
         def returnMap = dataService.createResponseForTable(dataTableConfig, returnList, "receipt-data", params.sEcho)
         render returnMap as JSON
     }
@@ -110,13 +119,9 @@ class ReceiptController {
         }
     }
 
-    protected void notFound() {
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.not.found.message', args: [message(code: 'receipt.label', default: 'Receipt'), params.id])
-                redirect action: "index", method: "GET"
-            }
-            '*'{ render status: NOT_FOUND }
-        }
+    @Override
+    void afterPropertiesSet() throws Exception {
+        createUserTableConfig("tableconfig.$receiptDataTableKey", dataTableConfig)
     }
+
 }

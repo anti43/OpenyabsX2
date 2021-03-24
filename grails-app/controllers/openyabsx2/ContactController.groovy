@@ -12,17 +12,15 @@ import org.springframework.beans.factory.InitializingBean
 import static org.springframework.http.HttpStatus.*
 
 @Secured('ROLE_ADMIN')
-class ContactController implements InitializingBean {
+class ContactController implements InitializingBean, OpenyabsController {
 
     static scope = "session"
 
     ContactService contactService
     DataService dataService
-    SpringSecurityService springSecurityService
-
-    JsonSlurper jsonSlurper = new JsonSlurper()
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+    String contactDataTableKey= "contact-data"
 
     static dataTableConfig = [headerList: [
             [name: "id", messageBundleKey: "id", sortPropertyName: "id", hidden: true],
@@ -39,7 +37,7 @@ class ContactController implements InitializingBean {
     ]]
 
     def index() {
-        render view: "index", model: [tableConfig: getUserTableConfig()]
+        render view: "index", model: [tableConfig: getUserTableConfig(contactDataTableKey)]
     }
 
     def indexData() {
@@ -47,7 +45,7 @@ class ContactController implements InitializingBean {
         def offset = params.iDisplayStart ? Integer.parseInt(params.iDisplayStart) : 0
         def max = params.iDisplayLength ? Integer.parseInt(params.iDisplayLength) : 10
         def sortOrder = params.sSortDir_0 ? params.sSortDir_0 : "desc"
-        def sortBy = dataService.getPropertyNameByIndex(getUserTableConfig(), params.iSortCol_0 as Integer)
+        def sortBy = dataService.getPropertyNameByIndex(getUserTableConfig(contactDataTableKey), params.iSortCol_0 as Integer)
         def searchString = params.sSearch
 
         def args = [offset: offset, max: max, order: sortOrder, sort: sortBy]
@@ -55,7 +53,7 @@ class ContactController implements InitializingBean {
         def returnList = searchString?.trim() ?
                 dataService.createFulltextHql(Contact.class, searchString, args) :
                 contactService.list(args)
-        def returnMap = dataService.createResponseForTable(dataTableConfig, returnList, "contact-data", params.sEcho)
+        def returnMap = dataService.createResponseForTable(getUserTableConfig(contactDataTableKey), returnList, contactDataTableKey, params.sEcho)
         render returnMap as JSON
     }
 
@@ -132,22 +130,11 @@ class ContactController implements InitializingBean {
         }
     }
 
-    protected void notFound() {
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.not.found.message', args: [message(code: 'contact.label', default: 'Contact'), params.id])
-                redirect action: "index", method: "GET"
-            }
-            '*' { render status: NOT_FOUND }
-        }
-    }
 
     @Override
     void afterPropertiesSet() throws Exception {
-        ConfigEntry.getValueForUserOrCreateGlobal("tableconfig.contact-data", springSecurityService.currentUser as User, (dataTableConfig as JSON) as String)
+        createUserTableConfig("tableconfig.$contactDataTableKey", dataTableConfig)
     }
 
-    Map getUserTableConfig() {
-        jsonSlurper.parseText(ConfigEntry.getValueForUser("tableconfig.contact-data", springSecurityService.currentUser as User).value) as Map
-    }
+
 }

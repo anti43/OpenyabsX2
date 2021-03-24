@@ -2,19 +2,23 @@ package openyabsx2
 
 
 import grails.converters.JSON
+import grails.plugin.springsecurity.SpringSecurityService
 import grails.plugin.springsecurity.annotation.Secured
 import grails.validation.ValidationException
+import groovy.json.JsonSlurper
 import openyabsx2.*
+import org.springframework.beans.factory.InitializingBean
 
 import static org.springframework.http.HttpStatus.*
 
 @Secured('ROLE_ADMIN')
-class ReceiptItemController {
+class ReceiptItemController implements InitializingBean, OpenyabsController  {
 
     ReceiptItemService receiptItemService
     DataService dataService
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+    String receiptItemDataTableKey= "receiptItem-data"
 
     static dataTableConfig =  [headerList : [
             [name: "id", messageBundleKey: "id", sortPropertyName: "id", hidden: true],
@@ -22,7 +26,7 @@ class ReceiptItemController {
     ]]
 
     def index() {
-        render view: "index", model: [tableConfig: dataTableConfig]
+        render view: "index", model: [tableConfig: getUserTableConfig(receiptDataTableKey)]
     }
 
     def indexData() {
@@ -30,10 +34,15 @@ class ReceiptItemController {
         def offset = params.iDisplayStart ? Integer.parseInt(params.iDisplayStart) : 0
         def max = params.iDisplayLength ? Integer.parseInt(params.iDisplayLength) : 10
         def sortOrder = params.sSortDir_0 ? params.sSortDir_0 : "desc"
-        def sortBy = dataService.getPropertyNameByIndex(dataTableConfig, params.iSortCol_0 as Integer)
+        def sortBy = dataService.getPropertyNameByIndex(getUserTableConfig(receiptDataTableKey), params.iSortCol_0 as Integer)
         def searchString = params.sSearch
-        def returnList = receiptItemService.list([offset:offset, max:max, order: sortOrder, sort: sortBy ])
-        def returnMap = dataService.createResponseForTable(dataTableConfig, returnList, "receiptItem-data", params.sEcho)
+
+        def args = [offset: offset, max: max, order: sortOrder, sort: sortBy]
+
+        def returnList = searchString?.trim() ?
+                dataService.createFulltextHql(ReceiptItem.class, searchString, args) :
+                receiptItemService.list(args)
+        def returnMap = dataService.createResponseForTable(getUserTableConfig(receiptDataTableKey), returnList, receiptDataTableKey, params.sEcho)
         render returnMap as JSON
     }
 
@@ -109,14 +118,9 @@ class ReceiptItemController {
             '*'{ render status: NO_CONTENT }
         }
     }
-
-    protected void notFound() {
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.not.found.message', args: [message(code: 'receiptItem.label', default: 'ReceiptItem'), params.id])
-                redirect action: "index", method: "GET"
-            }
-            '*'{ render status: NOT_FOUND }
-        }
+    @Override
+    void afterPropertiesSet() throws Exception {
+        createUserTableConfig("tableconfig.$receiptItemDataTableKey", dataTableConfig)
     }
+
 }
