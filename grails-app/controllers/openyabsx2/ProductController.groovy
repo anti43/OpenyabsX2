@@ -122,6 +122,6 @@ class ProductController implements InitializingBean, OpenyabsController {
 
     @Override
     void afterPropertiesSet() throws Exception {
-        createUserTableConfig("tableconfig.$productDataTableKey", dataTableConfig)
+        createUserTableConfig( productDataTableKey, dataTableConfig)
     }
 }

@@ -120,7 +120,7 @@ class ReceiptItemController implements InitializingBean, OpenyabsController  {
     }
     @Override
     void afterPropertiesSet() throws Exception {
-        createUserTableConfig("tableconfig.$receiptItemDataTableKey", dataTableConfig)
+        createUserTableConfig($receiptItemDataTableKey, dataTableConfig)
     }
 
 }

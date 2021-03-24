@@ -26,6 +26,6 @@ trait OpenyabsController {
     }
 
     Map getUserTableConfig(key) {
-        jsonSlurper.parseText(ConfigEntry.getValueForUser("tableconfig.$key", springSecurityService.currentUser as User).value) as Map
+        jsonSlurper.parseText(ConfigEntry.getValueForUser("tableconfig.$key", springSecurityService.currentUser as User)?.value?:"{}") as Map
     }
 }

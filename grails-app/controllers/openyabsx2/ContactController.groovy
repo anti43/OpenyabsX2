@@ -133,7 +133,7 @@ class ContactController implements InitializingBean, OpenyabsController {
 
     @Override
     void afterPropertiesSet() throws Exception {
-        createUserTableConfig("tableconfig.$contactDataTableKey", dataTableConfig)
+        createUserTableConfig(contactDataTableKey, dataTableConfig)
     }
 
 
