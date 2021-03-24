@@ -111,7 +111,7 @@ class Contact {
         log.info("Loaded id $id")
     }
 
-    def delete() {
+    void delete() {
         deleted = new Date()
         save()
         SearchEntry.removeFor(this)

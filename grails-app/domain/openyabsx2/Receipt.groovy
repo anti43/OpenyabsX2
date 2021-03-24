@@ -1,5 +1,7 @@
 package openyabsx2
 
+import org.grails.datastore.gorm.GormEntity
+
 
 class Receipt {
 
@@ -111,7 +113,7 @@ class Receipt {
         //receiptTypeService.execute("onLoad", this)
     }
 
-    def delete() {
+    void delete() {
         deleted = new Date()
         save()
         SearchEntry.removeFor(this)
