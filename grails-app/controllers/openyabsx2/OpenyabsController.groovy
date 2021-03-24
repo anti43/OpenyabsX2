@@ -22,7 +22,7 @@ trait OpenyabsController {
     }
 
     void createUserTableConfig(key, dataTableConfig) throws Exception {
-        ConfigEntry.getValueForUserOrCreateGlobal("tableconfig.$receiptDataTableKey", springSecurityService.currentUser as User, (dataTableConfig as JSON) as String)
+        ConfigEntry.getValueForUserOrCreateGlobal("tableconfig.$key", springSecurityService.currentUser as User, (dataTableConfig as JSON) as String)
     }
 
     Map getUserTableConfig(key) {
