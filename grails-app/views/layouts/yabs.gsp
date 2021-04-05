@@ -117,7 +117,7 @@
             </div>
         </nav>
 
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+        <main role="main" class="col-md-6 ml-sm-auto col-lg-8 px-md-4">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">Dashboard</h1>
 
@@ -136,7 +136,7 @@
             <g:layoutBody/>
         </main>
 
-        <div class="col clipboard">
+        <div class="col-md-3 col-lg-2 d-md-block clipboard">
 
             <div class="card card-body">
                 Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
