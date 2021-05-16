@@ -64,6 +64,7 @@ class DataTableTagLib {
                    jQuery(document).ready( function() {
                        var ${attrs.id}oTableCurrentData;
                        var ${attrs.id}oTable = jQuery('#${attrs.id}').dataTable({
+                               "lengthMenu": [ [10, 50, 100, -1], [10, 25, 50, " ∞ "] ],
                                "aaSorting":dataTableDefaultSorting,
                                "processing": true,
                                "serverSide": true, 
