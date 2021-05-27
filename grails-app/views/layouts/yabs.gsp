@@ -1,19 +1,9 @@
+<!DOCTYPE html>
 <html>
 <head>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/holder/2.9.6/holder.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.7.4/tinymce.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.7.4/jquery.tinymce.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.7.4/plugins/autolink/plugin.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.7.4/plugins/contextmenu/plugin.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.7.4/plugins/image/plugin.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.7.4/plugins/imagetools/plugin.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.7.4/plugins/paste/plugin.min.js"></script>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.7.4/skins/lightgray/skin.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.7.4/skins/lightgray/skin.mobile.min.css" />
 
     <asset:stylesheet src="application.css"/>
     <asset:javascript src="application.js"/>
