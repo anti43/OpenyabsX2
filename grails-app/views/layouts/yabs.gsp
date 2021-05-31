@@ -1,3 +1,4 @@
+<%@ page import="grails.plugin.springsecurity.SpringSecurityService; openyabsx2.NavigationLogEntryService" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,6 +13,7 @@
 </head>
 
 <body>
+<g:set var="ctx" value="${grails.util.Holders.getApplicationContext()}"/>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script><script
         src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
@@ -129,7 +131,13 @@
         <div class="col-md-3 col-lg-2 d-md-block clipboard">
 
             <div class="card card-body">
-                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+                <h2>Favorites</h2>
+                <ol>
+                    <g:each in="${ctx.getBean(openyabsx2.NavigationLogEntryService).listLimited(ctx.getBean(grails.plugin.springsecurity.SpringSecurityService).currentUser).sort({it.count*-1})}" >
+<li><a href="${it.url}">${it.name}</a> (${it.count})</li>
+                    </g:each>
+                </ol>
+
             </div>
 
             <div class="card card-body">

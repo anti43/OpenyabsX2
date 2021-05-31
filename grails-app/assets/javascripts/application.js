@@ -42,10 +42,9 @@ jQuery(document).ready(function () {
     });
 
     $('a').click(function (e) {
-
-        console.log(e);
-        e.preventDefault();
-        window.location = e.target.href;
+            e.preventDefault();
+            $.post("/navigationLogEntry/log/", {name: $(e.target).text(), url: e.target.href})
+            window.location = e.target.href;
         }
     )
 });
